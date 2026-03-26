@@ -2,9 +2,7 @@
 Compiladores — DC/UFSCar
 Professor: Daniel Lucrédio
 
-**Aluna:**
-
-- Camila Oliveira de Souza
+**Aluna:** Camila Oliveira de Souza
 
 **Descrição do Projeto**
 Este projeto consiste na implementação de um analisador léxico para a linguagem LA (Linguagem Algorítmica).
@@ -25,8 +23,7 @@ Em caso de erro léxico, o analisador interrompe a execução e reporta o erro c
 
 **Execução:**
 
-- O programa deve ser executado com DOIS argumentos obrigatórios: Caminho do arquivo de entrada
-e Caminho do arquivo de saída
+- O programa deve ser executado com DOIS argumentos obrigatórios: Caminho do arquivo de entrada e Caminho do arquivo de saída
 - Exemplo na prática: "mvn exec:java "-Dexec.mainClass=br.ufscar.dc.compiladores.jander.Principal" "-Dexec.args=teste.txt saida.txt" 
 
 **Entrada:**
@@ -37,7 +34,10 @@ e Caminho do arquivo de saída
 - Arquivo texto contendo a lista de tokens no formato:
 
 <'algoritmo','algoritmo'>
+
 <'declare','declare'>
+
 <'x',IDENT>
+
 ...
 
