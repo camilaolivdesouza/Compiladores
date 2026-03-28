@@ -53,10 +53,16 @@ public class Principal {
             }
 
             // tokens
-            if (isOperador(tipo)) {
-                writer.println("<'" + token.getText() + "','" + token.getText() + "'>");
-            } else {
+            // tokens
+            if (tipo.equals("IDENT") ||
+                tipo.equals("NUM_INT") ||
+                tipo.equals("NUM_REAL") ||
+                tipo.equals("CADEIA")) {
+
                 writer.println("<'" + token.getText() + "'," + tipo + ">");
+
+            } else {
+                writer.println("<'" + token.getText() + "','" + token.getText() + "'>");
             }
         }
 
