@@ -5,5 +5,5 @@ Repositório destinado aos trabalhos da disciplina Construção de Compiladores,
 ### Alunas
 - Camila Oliveira de Souza
 - Beatriz
-- Yara
+- Yara dos Santos Rodrigues, Turma B
 
