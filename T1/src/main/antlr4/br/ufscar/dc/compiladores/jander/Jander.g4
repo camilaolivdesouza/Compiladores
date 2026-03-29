@@ -111,6 +111,8 @@ IDENT : [a-zA-Z_] [a-zA-Z_0-9]*;
 // =====================
 WS : [ \t\r\n]+ -> skip;
 
-COMENTARIO : '{' (~'\n')* '}' -> skip;
-COMENTARIO_NAO_FECHADO : '{' (~'}')* '\n';
-ERRO : .;
+COMENTARIO : '{' ~('}'|'{')* '}' -> skip;
+
+COMENTARIO_NAO_FECHADO : '{' ~'}'* ;
+
+ERRO : . ;

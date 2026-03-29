@@ -53,7 +53,6 @@ public class Principal {
             }
 
             // tokens
-            // tokens
             if (tipo.equals("IDENT") ||
                 tipo.equals("NUM_INT") ||
                 tipo.equals("NUM_REAL") ||
