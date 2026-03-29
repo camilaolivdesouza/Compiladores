@@ -2,8 +2,12 @@
 Compiladores — DC/UFSCar
 Professor: Daniel Lucrédio
 
-**Aluna:** Camila Oliveira de Souza
+**Alunas:** 
+- Camila Oliveira de Souza
+- Beatriz
+- Yara
 
+  
 **Descrição do Projeto**
 Este projeto consiste na implementação de um analisador léxico para a linguagem LA (Linguagem Algorítmica).
 
