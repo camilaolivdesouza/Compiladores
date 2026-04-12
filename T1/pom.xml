@@ -54,6 +54,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
-        <exec.mainClass>br.ufscar.dc.compiladores.jander.Jander</exec.mainClass>
+        <exec.mainClass>br.ufscar.dc.compiladores.jander.Principal</exec.mainClass>
     </properties>
+
+<!--    <properties>-->
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--        <maven.compiler.release>21</maven.compiler.release>-->
+<!--        <exec.mainClass>br.ufscar.dc.compiladores.jander.Jander</exec.mainClass>-->
+<!--    </properties>-->
 </project>
