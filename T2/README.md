@@ -1,4 +1,4 @@
-# **T1**
+# **T2**
 
 ---
 
@@ -14,11 +14,13 @@ Professor: Daniel Lucrédio
 ---
 
 ## **Descrição do Projeto**
-Este projeto consiste na implementação de um analisador léxico para a linguagem LA (Linguagem Algorítmica).
+Este projeto consiste na implementação de um analisador sintático para a linguagem LA, utilizando ANTLR.
 
-O analisador lê um arquivo de entrada contendo um programa na linguagem LA e gera como saída uma lista de tokens identificados, conforme especificado pelo trabalho.
+O programa lê um arquivo de entrada contendo um programa em LA e verifica a existência de erros sintáticos, indicando a linha e o lexema próximos ao ponto em que o erro foi detectado.
 
-Em caso de erro léxico, o analisador interrompe a execução e reporta o erro correspondente.
+Além disso, os erros léxicos já tratados no Trabalho 1 continuam sendo identificados.
+
+A saída do programa é gravada em um arquivo texto.
 
 ### **Dependências**:
 
@@ -28,17 +30,18 @@ Em caso de erro léxico, o analisador interrompe a execução e reporta o erro c
 
 ### **Compilação**:
 
-- No diretório onde está o arquivo pom.xml, execute: ```mvn clean package```. Isso irá compilar o projeto e gerar o .jar com dependências.
+No diretório onde está o arquivo pom.xml, execute: ```mvn clean package```. Isso irá compilar o projeto e gerar o .jar com dependências.
 
 ### **Execução**:
 
-- O programa deve ser executado com DOIS argumentos obrigatórios: _**Caminho do arquivo de entrada**_ e **_Caminho do arquivo de saída_**
-- Exemplo na prática: 
+O programa deve ser executado com DOIS argumentos obrigatórios: _**Caminho do arquivo de entrada**_ e **_Caminho do arquivo de saída_**
+
+Exemplo na prática: 
 
 
 - **Via jar**:
 ```
-    java -jar "c:\compilador\meu-compilador.jar" "c:\casos-de-teste\arquivo1.txt" "c:\temp\saida.txt"
+    java -jar "c:\compilador\meu-compilador.jar" "c:\casos-de-teste\entrada.txt" "c:\temp\saida.txt"
 ```
 
 - **Via maven**:
@@ -47,18 +50,10 @@ mvn exec:java "-Dexec.mainClass=br.ufscar.dc.compiladores.jander.Principal" -Dex
 ```
 
 **Entrada:**
-- Arquivo texto contendo código na linguagem LA.
+Arquivo texto contendo código na linguagem LA.
 
 **Saída:**
-- Arquivo texto contendo a lista de tokens no formato:
-
-```
-<'algoritmo','algoritmo'>
-
-<'declare','declare'>
-
-<'x',IDENT>
-
-...
-```
+- Arquivo texto contendo a mensagem correspondente ao primeiro erro encontrado durante a compilação.
+- O programa pode identificar: erros léxicos, conforme especificado no T1; erros sintáticos, conforme especificado no T2.
+- Após a mensagem de erro, o programa imprime: ```Fim da compilacao```
 
