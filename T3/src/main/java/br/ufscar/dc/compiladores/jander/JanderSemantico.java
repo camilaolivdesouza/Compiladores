@@ -41,7 +41,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
                 // "O mesmo identificador não pode ser usado novamente no mesmo escopo"
                 if (escopoAtual.existe(nomeVar)) {
                     JanderSemanticoUtils.adicionarErroSemantico(idCtx.start,
-                            "identificador " + nomeVar + " ja declarado anteriormente no escopo");
+                            "identificador " + nomeVar + " ja declarado anteriormente");
                 } else {
                     escopoAtual.adicionar(nomeVar, isRegistro ? TipoJander.INVALIDO : tipoEnum);
                 }
@@ -61,7 +61,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         // Verifica se a função/procedimento já foi declarada globalmente
         if (escopoGlobal.existe(nomeRotina)) {
             JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(),
-                    "identificador " + nomeRotina + " ja declarado anteriormente no escopo");
+                    "identificador " + nomeRotina + " ja declarado anteriormente");
         } else {
             escopoGlobal.adicionar(nomeRotina, TipoJander.INVALIDO);
         }
@@ -113,7 +113,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         } else {
             TipoJander tipoExpressao = JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
 
-            if (tipoExpressao != TipoJander.INVALIDO && !JanderSemanticoUtils.tiposCompativeis(tipoVariavel, tipoExpressao)) {
+            if (!JanderSemanticoUtils.tiposCompativeis(tipoVariavel, tipoExpressao)) {
                 // ponteiro <- endereco (ignoramos tipo aqui se a gramática usar o prefixo ^)
                 JanderSemanticoUtils.adicionarErroSemantico(ctx.identificador().start,
                         "atribuicao nao compativel para " + nomeVar);
@@ -153,4 +153,11 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         }
         return super.visitCmdEscreva(ctx);
     }
+
+    @Override
+    public Void visitCmdEnquanto(JanderParser.CmdEnquantoContext ctx) {
+        JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
+        return super.visitCmdEnquanto(ctx);
+    }
+
 }
