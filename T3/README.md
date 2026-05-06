@@ -1,4 +1,4 @@
-lls# **T2**
+lls# **T3**
 
 ---
 
@@ -14,9 +14,9 @@ Professor: Daniel Lucrédio
 ---
 
 ## **Descrição do Projeto**
-Este projeto consiste na implementação de um analisador sintático para a linguagem LA, utilizando ANTLR.
+Este projeto consiste na implementação de um analisador semântico para a linguagem LA, utilizando ANTLR.
 
-O programa lê um arquivo de entrada contendo um programa em LA e verifica a existência de erros sintáticos, indicando a linha e o lexema próximos ao ponto em que o erro foi detectado.
+O programa lê um arquivo de entrada contendo um programa em LA e verifica a existência de erros sintáticos e semânticos, indicando a linha e o lexema próximos ao ponto em que o erro foi detectado.
 
 Além disso, os erros léxicos já tratados no Trabalho 1 continuam sendo identificados.
 
@@ -54,6 +54,6 @@ Arquivo texto contendo código na linguagem LA.
 
 **Saída:**
 - Arquivo texto contendo a mensagem correspondente ao primeiro erro encontrado durante a compilação.
-- O programa pode identificar: erros léxicos, conforme especificado no T1; erros sintáticos, conforme especificado no T2.
+- O programa pode identificar: erros léxicos, conforme especificado no T1; erros sintáticos, conforme especificado no T2; erros semânticos, conforme especificado no T3.
 - Após a mensagem de erro, o programa imprime: ```Fim da compilacao```
 
