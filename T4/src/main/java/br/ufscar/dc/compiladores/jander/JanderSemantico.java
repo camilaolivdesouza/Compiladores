@@ -1,49 +1,116 @@
 package br.ufscar.dc.compiladores.jander;
 
-import br.ufscar.dc.compiladores.jander.TabelaDeSimbolos.TipoJander;
-import org.antlr.v4.runtime.Token;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JanderSemantico extends JanderBaseVisitor<Void> {
 
-    // pilha de tabelas de símbolos
     Escopos escopos;
+    boolean dentroDeFuncao = false;
 
     @Override
     public Void visitPrograma(JanderParser.ProgramaContext ctx) {
-        // criação de um escopo global limpo
         escopos = new Escopos();
         return super.visitPrograma(ctx);
     }
 
-    @Override
-    public Void visitDeclaracao_local(JanderParser.Declaracao_localContext ctx) {
-        // "declare variavel"
-        if (ctx.DECLARE() != null && ctx.variavel() != null) {
-            JanderParser.VariavelContext varCtx = ctx.variavel();
+    private TabelaDeSimbolos.EntradaTabelaDeSimbolos buscarEmEscopos(String nome) {
+        for (TabelaDeSimbolos tab : escopos.percorrerEscoposAninhados()) {
+            if (tab.existe(nome)) return tab.verificar(nome);
+        }
+        return null;
+    }
 
-            String strTipo = varCtx.tipo().getText();
+    private TabelaDeSimbolos preencherCamposRegistro(JanderParser.RegistroContext ctx) {
+        TabelaDeSimbolos tabelaCampos = new TabelaDeSimbolos();
+        for (var varCtx : ctx.variavel()) {
+            String tipoBruto = varCtx.tipo().getText();
+            boolean ehPonteiro = tipoBruto.startsWith("^");
+            String tBase = ehPonteiro ? tipoBruto.substring(1) : tipoBruto;
 
-            String tipoBase = strTipo.startsWith("^") ? strTipo.substring(1) : strTipo;
-
-            TipoJander tipoEnum = JanderSemanticoUtils.verificarTipo(tipoBase);
-
-            // Verifica se o tipo é válido
-            boolean isRegistro = strTipo.startsWith("registro");
-            if (tipoEnum == TipoJander.INVALIDO && !isRegistro) {
-                JanderSemanticoUtils.adicionarErroSemantico(varCtx.tipo().start,
-                        "tipo " + strTipo + " nao declarado");
+            TabelaDeSimbolos subCampos = null;
+            if (varCtx.tipo().registro() != null) {
+                subCampos = preencherCamposRegistro(varCtx.tipo().registro());
+                tBase = "registro";
+            } else {
+                TabelaDeSimbolos.EntradaTabelaDeSimbolos defTipo = buscarEmEscopos(tBase);
+                if (defTipo != null && defTipo.categoria == TabelaDeSimbolos.Categoria.TIPO) {
+                    subCampos = defTipo.campos;
+                }
             }
 
-            for (var idCtx : varCtx.identificador()) {
-                String nomeVar = idCtx.getText();
-                TabelaDeSimbolos escopoAtual = escopos.obterEscopoAtual();
+            String tipoFinal = ehPonteiro ? "^" + tBase : tBase;
 
-                // "O mesmo identificador não pode ser usado novamente no mesmo escopo"
+            for (var idCtx : varCtx.identificador()) {
+                String nomeCampo = idCtx.IDENT(0).getText();
+                tabelaCampos.adicionar(nomeCampo, TabelaDeSimbolos.Categoria.VARIAVEL, tipoFinal);
+                if (subCampos != null) {
+                    tabelaCampos.verificar(nomeCampo).campos = subCampos;
+                }
+            }
+        }
+        return tabelaCampos;
+    }
+
+    @Override
+    public Void visitDeclaracao_local(JanderParser.Declaracao_localContext ctx) {
+        TabelaDeSimbolos escopoAtual = escopos.obterEscopoAtual();
+
+        // 1. Tratamento para CONSTANTES
+        if (ctx.getText().startsWith("constante")) {
+            String nomeConstante = ctx.IDENT().getText();
+            if (escopoAtual.existe(nomeConstante)) {
+                JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "identificador " + nomeConstante + " ja declarado anteriormente");
+            } else {
+                String tipoConst = ctx.tipo_basico() != null ? ctx.tipo_basico().getText() : "inteiro";
+                escopoAtual.adicionar(nomeConstante, TabelaDeSimbolos.Categoria.CONSTANTE, tipoConst);
+            }
+        }
+
+        if (ctx.TIPO() != null) {
+            String nomeTipo = ctx.IDENT().getText();
+            if (escopoAtual.existe(nomeTipo)) {
+                JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "identificador " + nomeTipo + " ja declarado anteriormente");
+            } else {
+                String tipoTexto = ctx.tipo().registro() != null ? "registro" : ctx.tipo().getText();
+                escopoAtual.adicionar(nomeTipo, TabelaDeSimbolos.Categoria.TIPO, tipoTexto);
+                if (ctx.tipo().registro() != null) {
+                    escopoAtual.verificar(nomeTipo).campos = preencherCamposRegistro(ctx.tipo().registro());
+                }
+            }
+        }
+
+        if (ctx.DECLARE() != null && ctx.variavel() != null) {
+            var varCtx = ctx.variavel();
+            String tipoBruto = varCtx.tipo().getText();
+            boolean ehPonteiro = tipoBruto.startsWith("^");
+            String tBase = ehPonteiro ? tipoBruto.substring(1) : tipoBruto;
+
+            TabelaDeSimbolos subCampos = null;
+            if (varCtx.tipo().registro() != null) {
+                subCampos = preencherCamposRegistro(varCtx.tipo().registro());
+                tBase = "registro";
+            } else {
+                TabelaDeSimbolos.EntradaTabelaDeSimbolos defTipo = buscarEmEscopos(tBase);
+                if (defTipo != null && defTipo.categoria == TabelaDeSimbolos.Categoria.TIPO) {
+                    subCampos = defTipo.campos;
+                } else if (!tBase.equals("inteiro") && !tBase.equals("real") && !tBase.equals("literal") && !tBase.equals("logico")) {
+                    JanderSemanticoUtils.adicionarErroSemantico(varCtx.tipo().start, "tipo " + tBase + " nao declarado");
+                    tBase = "invalido";
+                }
+            }
+
+            String tipoFinal = ehPonteiro ? "^" + tBase : tBase;
+
+            for (var idCtx : varCtx.identificador()) {
+                String nomeVar = idCtx.IDENT(0).getText();
                 if (escopoAtual.existe(nomeVar)) {
-                    JanderSemanticoUtils.adicionarErroSemantico(idCtx.start,
-                            "identificador " + nomeVar + " ja declarado anteriormente");
+                    JanderSemanticoUtils.adicionarErroSemantico(idCtx.start, "identificador " + nomeVar + " ja declarado anteriormente");
                 } else {
-                    escopoAtual.adicionar(nomeVar, isRegistro ? TipoJander.INVALIDO : tipoEnum);
+                    escopoAtual.adicionar(nomeVar, TabelaDeSimbolos.Categoria.VARIAVEL, tipoFinal);
+                    if (subCampos != null) {
+                        escopoAtual.verificar(nomeVar).campos = subCampos;
+                    }
                 }
             }
         }
@@ -51,103 +118,138 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         return super.visitDeclaracao_local(ctx);
     }
 
-    // TRATAMENTO DE ESCOPOS ANINHADOS (Funções e Procedimentos)
-
     @Override
     public Void visitDeclaracao_global(JanderParser.Declaracao_globalContext ctx) {
         String nomeRotina = ctx.IDENT().getText();
         TabelaDeSimbolos escopoGlobal = escopos.obterEscopoAtual();
+        TabelaDeSimbolos.Categoria cat = ctx.FUNCAO() != null ? TabelaDeSimbolos.Categoria.FUNCAO : TabelaDeSimbolos.Categoria.PROCEDIMENTO;
 
-        // Verifica se a função/procedimento já foi declarada globalmente
         if (escopoGlobal.existe(nomeRotina)) {
-            JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(),
-                    "identificador " + nomeRotina + " ja declarado anteriormente");
+            JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "identificador " + nomeRotina + " ja declarado anteriormente");
         } else {
-            escopoGlobal.adicionar(nomeRotina, TipoJander.INVALIDO);
+            String tipoRetorno = (cat == TabelaDeSimbolos.Categoria.FUNCAO) ? ctx.tipo_estendido().getText() : "void";
+            escopoGlobal.adicionar(nomeRotina, cat, tipoRetorno);
         }
 
         escopos.criarNovoEscopo();
+        TabelaDeSimbolos.EntradaTabelaDeSimbolos rotinaRef = escopoGlobal.verificar(nomeRotina);
 
         if (ctx.parametros() != null) {
             for (var paramCtx : ctx.parametros().parametro()) {
-                String strTipo = paramCtx.tipo_estendido().getText();
-                String tipoBase = strTipo.startsWith("^") ? strTipo.substring(1) : strTipo;
-                TipoJander tipoEnum = JanderSemanticoUtils.verificarTipo(tipoBase);
+                String tipoParam = paramCtx.tipo_estendido().getText();
+                String tBase = tipoParam.startsWith("^") ? tipoParam.substring(1) : tipoParam;
+
+                TabelaDeSimbolos subCampos = null;
+                TabelaDeSimbolos.EntradaTabelaDeSimbolos defTipo = buscarEmEscopos(tBase);
+                if (defTipo != null && defTipo.categoria == TabelaDeSimbolos.Categoria.TIPO) {
+                    subCampos = defTipo.campos;
+                }
 
                 for (var idCtx : paramCtx.identificador()) {
-                    String nomeParam = idCtx.getText();
-                    escopos.obterEscopoAtual().adicionar(nomeParam, tipoEnum);
+                    String nomeParam = idCtx.IDENT(0).getText();
+                    if (escopos.obterEscopoAtual().existe(nomeParam)) {
+                        JanderSemanticoUtils.adicionarErroSemantico(idCtx.start, "identificador " + nomeParam + " ja declarado anteriormente");
+                    } else {
+                        escopos.obterEscopoAtual().adicionar(nomeParam, TabelaDeSimbolos.Categoria.VARIAVEL, tipoParam);
+                        if (subCampos != null) {
+                            escopos.obterEscopoAtual().verificar(nomeParam).campos = subCampos;
+                        }
+                        if (rotinaRef != null) {
+                            rotinaRef.parametros.add(tipoParam);
+                        }
+                    }
                 }
             }
         }
 
+        boolean antigaDentroDeFuncao = dentroDeFuncao;
+        dentroDeFuncao = (cat == TabelaDeSimbolos.Categoria.FUNCAO);
+
         super.visitDeclaracao_global(ctx);
 
+        dentroDeFuncao = antigaDentroDeFuncao;
         escopos.abandonarEscopo();
-
         return null;
     }
 
-    // TRATAMENTO DE COMANDOS (Atribuição, Leitura, etc.)
+    @Override
+    public Void visitCmdChamada(JanderParser.CmdChamadaContext ctx) {
+        String nomeRotina = ctx.IDENT().getText();
+        TabelaDeSimbolos.EntradaTabelaDeSimbolos entrada = buscarEmEscopos(nomeRotina);
+
+        if (entrada == null) {
+            JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "identificador " + nomeRotina + " nao declarado");
+            return super.visitCmdChamada(ctx);
+        }
+
+        List<String> tiposArgs = new ArrayList<>();
+        if (ctx.expressao() != null) {
+            for (var exp : ctx.expressao()) {
+                tiposArgs.add(JanderSemanticoUtils.verificarTipo(escopos, exp));
+            }
+        }
+
+        if (entrada.parametros.size() != tiposArgs.size()) {
+            JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "incompatibilidade de parametros na chamada de " + nomeRotina);
+        } else {
+            for (int i = 0; i < tiposArgs.size(); i++) {
+                if (!JanderSemanticoUtils.compativelParametro(entrada.parametros.get(i), tiposArgs.get(i))) {
+                    JanderSemanticoUtils.adicionarErroSemantico(ctx.IDENT().getSymbol(), "incompatibilidade de parametros na chamada de " + nomeRotina);
+                    break;
+                }
+            }
+        }
+        return super.visitCmdChamada(ctx);
+    }
 
     @Override
     public Void visitCmdAtribuicao(JanderParser.CmdAtribuicaoContext ctx) {
-        String nomeVar = ctx.identificador().getText();
+        String tipoVar = JanderSemanticoUtils.obterTipoIdentificador(escopos, ctx.identificador());
 
-        // Busca da variável na pilha de escopos
-        boolean declarada = false;
-        TipoJander tipoVariavel = TipoJander.INVALIDO;
+        if (!tipoVar.equals("invalido")) {
+            if (ctx.ENDERECO() != null) {
+                if (tipoVar.startsWith("^")) {
+                    tipoVar = tipoVar.substring(1);
+                } else {
+                    tipoVar = "invalido";
+                }
+            }
 
-        for (TabelaDeSimbolos tabela : escopos.percorrerEscoposAninhados()) {
-            if (tabela.existe(nomeVar)) {
-                declarada = true;
-                tipoVariavel = tabela.verificar(nomeVar);
-                break;
+            String tipoExpressao = JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
+
+            if (!JanderSemanticoUtils.compativelAtribuicao(tipoVar, tipoExpressao)) {
+                String prefix = ctx.ENDERECO() != null ? "^" : "";
+                JanderSemanticoUtils.adicionarErroSemantico(ctx.identificador().start, "atribuicao nao compativel para " + prefix + ctx.identificador().getText());
             }
         }
-
-        // "Identificador não declarado"
-        if (!declarada) {
-            JanderSemanticoUtils.adicionarErroSemantico(ctx.identificador().start,
-                    "identificador " + nomeVar + " nao declarado");
-        } else {
-            TipoJander tipoExpressao = JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
-
-            if (!JanderSemanticoUtils.tiposCompativeis(tipoVariavel, tipoExpressao)) {
-                // ponteiro <- endereco (ignoramos tipo aqui se a gramática usar o prefixo ^)
-                JanderSemanticoUtils.adicionarErroSemantico(ctx.identificador().start,
-                        "atribuicao nao compativel para " + nomeVar);
-            }
-        }
-
         return super.visitCmdAtribuicao(ctx);
+    }
+
+    // Visita ao CmdSe adicionada para inferir expressões condicionais
+    @Override
+    public Void visitCmdSe(JanderParser.CmdSeContext ctx) {
+        JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
+        return super.visitCmdSe(ctx);
+    }
+
+    @Override
+    public Void visitCmdRetorne(JanderParser.CmdRetorneContext ctx) {
+        if (!dentroDeFuncao) {
+            JanderSemanticoUtils.adicionarErroSemantico(ctx.start, "comando retorne nao permitido nesse escopo");
+        }
+        return super.visitCmdRetorne(ctx);
     }
 
     @Override
     public Void visitCmdLeia(JanderParser.CmdLeiaContext ctx) {
-        // Ao ler uma variável do teclado, ela precisa ter sido declarada.
         for (var idCtx : ctx.identificador()) {
-            String nomeVar = idCtx.getText();
-            boolean declarada = false;
-
-            for (TabelaDeSimbolos tabela : escopos.percorrerEscoposAninhados()) {
-                if (tabela.existe(nomeVar)) {
-                    declarada = true;
-                    break;
-                }
-            }
-
-            if (!declarada) {
-                JanderSemanticoUtils.adicionarErroSemantico(idCtx.start,
-                        "identificador " + nomeVar + " nao declarado");
-            }
+            JanderSemanticoUtils.obterTipoIdentificador(escopos, idCtx);
         }
         return super.visitCmdLeia(ctx);
     }
 
     @Override
     public Void visitCmdEscreva(JanderParser.CmdEscrevaContext ctx) {
-        // Ao escrever algo, precisamos garantir que as expressões e variáveis internas existam
         for (var expCtx : ctx.expressao()) {
             JanderSemanticoUtils.verificarTipo(escopos, expCtx);
         }
@@ -159,5 +261,4 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         JanderSemanticoUtils.verificarTipo(escopos, ctx.expressao());
         return super.visitCmdEnquanto(ctx);
     }
-
 }
