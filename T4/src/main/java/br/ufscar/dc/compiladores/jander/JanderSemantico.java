@@ -3,6 +3,7 @@ package br.ufscar.dc.compiladores.jander;
 import java.util.ArrayList;
 import java.util.List;
 
+// Visitor que faz a análise semântica do programa.
 public class JanderSemantico extends JanderBaseVisitor<Void> {
 
     Escopos escopos;
@@ -10,10 +11,12 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
 
     @Override
     public Void visitPrograma(JanderParser.ProgramaContext ctx) {
+        // Inicializa a pilha de escopos no início da análise do programa
         escopos = new Escopos();
         return super.visitPrograma(ctx);
     }
 
+    // Busca um identificador em todos os escopos aninhados
     private TabelaDeSimbolos.EntradaTabelaDeSimbolos buscarEmEscopos(String nome) {
         for (TabelaDeSimbolos tab : escopos.percorrerEscoposAninhados()) {
             if (tab.existe(nome)) return tab.verificar(nome);
@@ -21,6 +24,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         return null;
     }
 
+    // Constroi a tabela de campos para um registro, incluindo registros aninhados e ponteiros
     private TabelaDeSimbolos preencherCamposRegistro(JanderParser.RegistroContext ctx) {
         TabelaDeSimbolos tabelaCampos = new TabelaDeSimbolos();
         for (var varCtx : ctx.variavel()) {
@@ -67,6 +71,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
             }
         }
 
+        // 2. Tratamento para declaração de tipos e registros
         if (ctx.TIPO() != null) {
             String nomeTipo = ctx.IDENT().getText();
             if (escopoAtual.existe(nomeTipo)) {
@@ -80,6 +85,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
             }
         }
 
+        // 3. Tratamento para declaração de variáveis locais
         if (ctx.DECLARE() != null && ctx.variavel() != null) {
             var varCtx = ctx.variavel();
             String tipoBruto = varCtx.tipo().getText();
@@ -134,6 +140,7 @@ public class JanderSemantico extends JanderBaseVisitor<Void> {
         escopos.criarNovoEscopo();
         TabelaDeSimbolos.EntradaTabelaDeSimbolos rotinaRef = escopoGlobal.verificar(nomeRotina);
 
+        // Processa parâmetros da rotina, adicionando-os ao escopo local da função/procedimento
         if (ctx.parametros() != null) {
             for (var paramCtx : ctx.parametros().parametro()) {
                 String tipoParam = paramCtx.tipo_estendido().getText();
