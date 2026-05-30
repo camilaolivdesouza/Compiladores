@@ -14,7 +14,7 @@ Professor: Daniel Lucrédio
 ---
 
 ## **Descrição do Projeto**
-Este projeto consiste na implementação de um analisador semântico para a linguagem LA, utilizando ANTLR.
+Este projeto consiste na implementação de um analisador semântico para a linguagem LA, similar ao trabalho 3, mas agora envolvendo também ponteiros, registros e funções, utilizando ANTLR.
 
 O programa lê um arquivo de entrada contendo um programa em LA e verifica a existência de erros sintáticos e semânticos, indicando a linha e o lexema próximos ao ponto em que o erro foi detectado.
 
