@@ -9,9 +9,9 @@ Professor: Daniel Lucrédio
 
 ### Alunas
 
-- Camila Oliveira de Souza — 800361
-- Beatriz Ferreira Martins — 820565
-- Yara dos Santos Rodrigues — 821774
+- Camila Oliveira de Souza — 800361  
+- Beatriz Ferreira Martins — 820565  
+- Yara dos Santos Rodrigues — 821774  
 
 ---
 
@@ -31,9 +31,9 @@ A partir de uma receita válida, o compilador será capaz de:
 
 1. analisar e validar a estrutura da receita;
 2. gerar uma visualização formatada da receita em HTML;
-3. adaptar a receita para restrições alimentares quando possível.
+3. sugerir adaptações para restrições alimentares quando disponíveis.
 
-As substituições alimentares são declaradas dentro da própria receita e podem ser utilizadas para gerar versões alternativas sem alterar a receita original.
+As adaptações alimentares são definidas na própria receita por meio de regras opcionais de substituição de ingredientes.
 
 ---
 
@@ -50,7 +50,7 @@ Análise Sintática
  ↓
 Análise Semântica
  ↓
-Adaptação para Restrição Alimentar (opcional)
+Adaptação Alimentar (opcional)
  ↓
 Geração de HTML
 ```
@@ -90,16 +90,16 @@ FIM
 Observações:
 
 - substituições são opcionais;
-- uma receita pode possuir ingredientes sem adaptações;
-- uma mesma receita pode oferecer adaptações para diferentes restrições alimentares.
+- ingredientes podem não possuir adaptações;
+- uma mesma receita pode oferecer múltiplas adaptações.
 
 ---
 
 ## Dependências
 
-- Java JDK 24
-- Maven 3.9.x ou superior
-- ANTLR 4.7.2
+- Java JDK 24  
+- Maven 3.9.x ou superior  
+- ANTLR 4.7.2  
 
 ---
 
@@ -121,21 +121,33 @@ O programa deve ser executado com:
 
 1. caminho do arquivo de entrada;
 2. caminho do arquivo de saída;
-3. restrição alimentar (opcional).
+3. restrição alimentar (**opcional**).
 
-### Via jar
+Quando nenhuma restrição alimentar for informada, a receita será processada normalmente.
+
+### Receita sem adaptação alimentar
 
 ```bash
 java -jar target/recipe-compiler-1.0-SNAPSHOT-jar-with-dependencies.jar entrada.txt saida.html
 ```
 
-Exemplo com adaptação alimentar:
+### Receita com adaptação alimentar
 
 ```bash
 java -jar target/recipe-compiler-1.0-SNAPSHOT-jar-with-dependencies.jar entrada.txt saida.html vegano
 ```
 
 ### Via Maven
+
+Sem restrição:
+
+```bash
+mvn exec:java \
+-Dexec.mainClass=br.ufscar.dc.compiladores.receita.Principal \
+-Dexec.args="entrada.txt saida.html"
+```
+
+Com restrição:
 
 ```bash
 mvn exec:java \
@@ -155,23 +167,36 @@ Arquivo texto contendo uma receita escrita na linguagem definida pelo projeto.
 
 Caso a compilação seja concluída com sucesso:
 
-- geração da versão formatada da receita;
-- aplicação das substituições alimentares quando solicitado.
+- geração da receita formatada em HTML;
+- aplicação das adaptações alimentares quando solicitadas.
 
 Exemplo:
 
 ```text
 Substituições aplicadas:
-ovo → linhaça
+"ovo" → "linhaça"
 ```
 
-Caso não existam substituições disponíveis:
+Caso nenhuma restrição alimentar seja informada:
+
+```text
+Receita processada sem adaptações alimentares.
+```
+
+Caso exista uma restrição solicitada, mas nenhuma substituição correspondente:
 
 ```text
 Receita não possui adaptações para a restrição alimentar solicitada.
 ```
 
-Caso ocorram erros:
+Caso a restrição alimentar informada seja inválida:
+
+```text
+Restrição alimentar "abc" não reconhecida.
+Fim da compilacao
+```
+
+Caso ocorram erros durante o processamento:
 
 - erros léxicos;
 - erros sintáticos;
@@ -195,10 +220,10 @@ Fim da compilacao
 
 ### Análise Semântica
 
-- validação de ingredientes;
-- validação de substituições alimentares;
-- aplicação de adaptações.
+- validação das regras de substituição;
+- validação das restrições alimentares;
+- aplicação das adaptações quando possível.
 
 ### Geração de Código
 
-- geração de HTML para exibição da receita.
+- geração de HTML para visualização da receita.
