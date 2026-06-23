@@ -1,13 +1,12 @@
-# Compilador de Receitas Culinárias
+## Compilador de Receitas Culinárias
 
----
 
-## Disciplina
+#### Disciplina
 
 Compiladores — DC/UFSCar  
 Professor: Daniel Lucrédio
 
-### Alunas
+#### Alunas
 
 - Camila Oliveira de Souza — 800361  
 - Beatriz Ferreira Martins — 820565  
@@ -15,7 +14,7 @@ Professor: Daniel Lucrédio
 
 ---
 
-## Descrição do Projeto
+### Descrição do Projeto
 
 Este projeto consiste no desenvolvimento de um compilador para uma linguagem específica de domínio (DSL) voltada à descrição de receitas culinárias.
 
@@ -37,7 +36,7 @@ As adaptações alimentares são definidas na própria receita por meio de regra
 
 ---
 
-## Funcionamento Geral
+### Funcionamento Geral
 
 Fluxo esperado da compilação:
 
@@ -57,7 +56,7 @@ Geração de HTML
 
 ---
 
-## Exemplo de Entrada
+### Exemplo de Entrada
 
 ```text
 RECEITA "Bolo de Chocolate"
@@ -95,7 +94,7 @@ Observações:
 
 ---
 
-## Dependências
+### Dependências
 
 - Java JDK 24  
 - Maven 3.9.x ou superior  
@@ -103,7 +102,7 @@ Observações:
 
 ---
 
-## Compilação
+### Compilação
 
 No diretório onde se encontra o arquivo `pom.xml`, execute:
 
@@ -115,7 +114,7 @@ Ao final será gerado um `.jar` contendo todas as dependências necessárias.
 
 ---
 
-## Execução
+### Execução
 
 O programa deve ser executado com:
 
@@ -125,19 +124,19 @@ O programa deve ser executado com:
 
 Quando nenhuma restrição alimentar for informada, a receita será processada normalmente.
 
-### Receita sem adaptação alimentar
+#### Receita sem adaptação alimentar
 
 ```bash
 java -jar target/recipe-compiler-1.0-SNAPSHOT-jar-with-dependencies.jar entrada.txt saida.html
 ```
 
-### Receita com adaptação alimentar
+#### Receita com adaptação alimentar
 
 ```bash
 java -jar target/recipe-compiler-1.0-SNAPSHOT-jar-with-dependencies.jar entrada.txt saida.html vegano
 ```
 
-### Via Maven
+#### Via Maven
 
 Sem restrição:
 
@@ -157,13 +156,13 @@ mvn exec:java \
 
 ---
 
-## Entrada
+### Entrada
 
 Arquivo texto contendo uma receita escrita na linguagem definida pelo projeto.
 
 ---
 
-## Saída
+### Saída
 
 Caso a compilação seja concluída com sucesso:
 
@@ -210,20 +209,20 @@ Fim da compilacao
 
 ---
 
-## Escopo do Projeto
+### Escopo do Projeto
 
-### Análise Léxica e Sintática
+#### Análise Léxica e Sintática
 
 - definição da linguagem;
 - reconhecimento da estrutura da receita;
 - validação da gramática.
 
-### Análise Semântica
+#### Análise Semântica
 
 - validação das regras de substituição;
 - validação das restrições alimentares;
 - aplicação das adaptações quando possível.
 
-### Geração de Código
+#### Geração de Código
 
 - geração de HTML para visualização da receita.
