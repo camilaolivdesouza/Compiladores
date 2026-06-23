@@ -2,12 +2,7 @@ package br.ufscar.dc.compiladores.receita;
 
 import java.io.IOException;
 
-import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.*;
 
 public class Principal {
 
@@ -16,25 +11,25 @@ public class Principal {
         if (args.length < 2 || args.length > 3) {
 
             System.out.println(
-                "Uso: java -jar compilador.jar entrada.txt saida.html [restricao]"
+                "Uso: entrada.txt saida.html [restricao]"
             );
 
             return;
         }
 
         String entrada = args[0];
-        String saida = args[1];
 
-        String restricao = null;
-
-        if (args.length == 3) {
-            restricao = args[2];
-        }
+        String restricao =
+            args.length == 3
+                ? args[2]
+                : null;
 
         try {
 
             CharStream cs =
-                CharStreams.fromFileName(entrada);
+                CharStreams.fromFileName(
+                    entrada
+                );
 
             ReceitaLexer lexer =
                 new ReceitaLexer(cs);
@@ -42,8 +37,55 @@ public class Principal {
             CommonTokenStream tokens =
                 new CommonTokenStream(lexer);
 
+            tokens.fill();
+
+            for (Token t : tokens.getTokens()) {
+
+                String nome =
+                    ReceitaLexer.VOCABULARY
+                        .getSymbolicName(
+                            t.getType()
+                        );
+
+                if ("CARACTERE_INVALIDO"
+                        .equals(nome)) {
+
+                    System.out.printf(
+                        "Linha %d: %s - simbolo nao identificado%n",
+                        t.getLine(),
+                        t.getText()
+                    );
+
+                    System.out.println(
+                        "Fim da compilacao"
+                    );
+
+                    return;
+
+                }
+
+                if ("ERRO_CADEIA"
+                        .equals(nome)) {
+
+                    System.out.printf(
+                        "Linha %d: cadeia literal nao fechada%n",
+                        t.getLine()
+                    );
+
+                    System.out.println(
+                        "Fim da compilacao"
+                    );
+
+                    return;
+
+                }
+
+            }
+
             ReceitaParser parser =
-                new ReceitaParser(tokens);
+                new ReceitaParser(
+                    tokens
+                );
 
             parser.removeErrorListeners();
 
@@ -55,15 +97,19 @@ public class Principal {
                             Recognizer<?, ?> recognizer,
                             Object offendingSymbol,
                             int line,
-                            int charPositionInLine,
+                            int pos,
                             String msg,
                             RecognitionException e
                     ) {
 
+                        Token token =
+                            (Token)
+                                offendingSymbol;
+
                         System.out.printf(
-                            "Linha %d:%d erro sintatico%n",
+                            "Linha %d: erro sintatico proximo a %s%n",
                             line,
-                            charPositionInLine
+                            token.getText()
                         );
 
                         System.out.println(
@@ -99,11 +145,6 @@ public class Principal {
             }
 
             System.out.println(
-                "Saida: "
-                + saida
-            );
-
-            System.out.println(
                 "Fim da compilacao"
             );
 
@@ -112,7 +153,8 @@ public class Principal {
         catch (Exception e) {
 
             System.out.println(
-                e.getMessage()
+                "Erro interno: "
+                + e.getMessage()
             );
 
             System.out.println(

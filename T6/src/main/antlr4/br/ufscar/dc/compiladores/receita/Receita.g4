@@ -154,3 +154,11 @@ WS
     : [ \t\r\n]+
       -> skip
     ;
+
+ERRO_CADEIA
+    : '"' (~["\r\n])* EOF
+    ;
+
+CARACTERE_INVALIDO
+    : .
+    ;
