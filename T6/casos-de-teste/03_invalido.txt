@@ -1,0 +1,11 @@
+RECEITA "Bolo"
+
+INGREDIENTES:
+
+100 g de "farinha";
+
+PASSOS:
+
+MISTURAR();
+
+FIM

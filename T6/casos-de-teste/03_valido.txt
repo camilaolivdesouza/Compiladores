@@ -1,0 +1,16 @@
+RECEITA "Panqueca"
+
+PORCOES: 4
+
+INGREDIENTES:
+
+200 g de "farinha";
+300 ml de "leite";
+2 un de "ovo";
+
+PASSOS:
+
+MISTURAR("farinha","leite");
+ADICIONAR("ovo");
+
+FIM

@@ -1,0 +1,13 @@
+RECEITA "Bolo"
+
+PORCOES: 2
+
+INGREDIENTES:
+
+100 g de "farinha";
+
+PASSOS:
+
+ASSAR(180 C, 40 min);
+
+FIM

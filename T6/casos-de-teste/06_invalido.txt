@@ -1,0 +1,13 @@
+RECEITA "Teste"
+
+PORCOES: 1
+
+INGREDIENTES:
+
+100 ml de "agua";
+
+PASSOS:
+
+VOAR();
+
+FIM

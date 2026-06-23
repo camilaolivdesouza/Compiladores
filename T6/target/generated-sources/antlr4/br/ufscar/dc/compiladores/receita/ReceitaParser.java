@@ -21,7 +21,8 @@ public class ReceitaParser extends Parser {
 		DE=8, VEGANO=9, VEGETARIANO=10, LACTOSE=11, GLUTEN=12, MISTURAR=13, ADICIONAR=14, 
 		ASSAR=15, BATER=16, REFRIGERAR=17, COZINHAR=18, G=19, KG=20, ML=21, L=22, 
 		UN=23, C=24, MIN=25, NUMERO=26, STRING=27, DOIS_PONTOS=28, VIRGULA=29, 
-		PONTO_VIRGULA=30, ABRE_PAREN=31, FECHA_PAREN=32, WS=33;
+		PONTO_VIRGULA=30, ABRE_PAREN=31, FECHA_PAREN=32, WS=33, ERRO_CADEIA=34, 
+		CARACTERE_INVALIDO=35;
 	public static final int
 		RULE_receita = 0, RULE_cabecalho = 1, RULE_ingredientes = 2, RULE_ingrediente = 3, 
 		RULE_substituicao = 4, RULE_restricao = 5, RULE_passos = 6, RULE_passo = 7, 
@@ -50,7 +51,7 @@ public class ReceitaParser extends Parser {
 			"POR", "DE", "VEGANO", "VEGETARIANO", "LACTOSE", "GLUTEN", "MISTURAR", 
 			"ADICIONAR", "ASSAR", "BATER", "REFRIGERAR", "COZINHAR", "G", "KG", "ML", 
 			"L", "UN", "C", "MIN", "NUMERO", "STRING", "DOIS_PONTOS", "VIRGULA", 
-			"PONTO_VIRGULA", "ABRE_PAREN", "FECHA_PAREN", "WS"
+			"PONTO_VIRGULA", "ABRE_PAREN", "FECHA_PAREN", "WS", "ERRO_CADEIA", "CARACTERE_INVALIDO"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -292,11 +293,8 @@ public class ReceitaParser extends Parser {
 		public TerminalNode DE() { return getToken(ReceitaParser.DE, 0); }
 		public TerminalNode STRING() { return getToken(ReceitaParser.STRING, 0); }
 		public TerminalNode PONTO_VIRGULA() { return getToken(ReceitaParser.PONTO_VIRGULA, 0); }
-		public List<SubstituicaoContext> substituicao() {
-			return getRuleContexts(SubstituicaoContext.class);
-		}
-		public SubstituicaoContext substituicao(int i) {
-			return getRuleContext(SubstituicaoContext.class,i);
+		public SubstituicaoContext substituicao() {
+			return getRuleContext(SubstituicaoContext.class,0);
 		}
 		public IngredienteContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -332,21 +330,17 @@ public class ReceitaParser extends Parser {
 			match(DE);
 			setState(46);
 			match(STRING);
-			setState(50);
+			setState(48);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while (_la==SUBSTITUIR) {
-				{
+			if (_la==SUBSTITUIR) {
 				{
 				setState(47);
 				substituicao();
 				}
-				}
-				setState(52);
-				_errHandler.sync(this);
-				_la = _input.LA(1);
 			}
-			setState(53);
+
+			setState(50);
 			match(PONTO_VIRGULA);
 			}
 		}
@@ -368,7 +362,6 @@ public class ReceitaParser extends Parser {
 		}
 		public TerminalNode POR() { return getToken(ReceitaParser.POR, 0); }
 		public TerminalNode STRING() { return getToken(ReceitaParser.STRING, 0); }
-		public TerminalNode PONTO_VIRGULA() { return getToken(ReceitaParser.PONTO_VIRGULA, 0); }
 		public SubstituicaoContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -394,16 +387,14 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(55);
+			setState(52);
 			match(SUBSTITUIR);
-			setState(56);
+			setState(53);
 			restricao();
-			setState(57);
+			setState(54);
 			match(POR);
-			setState(58);
+			setState(55);
 			match(STRING);
-			setState(59);
-			match(PONTO_VIRGULA);
 			}
 		}
 		catch (RecognitionException re) {
@@ -448,7 +439,7 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(61);
+			setState(57);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << VEGANO) | (1L << VEGETARIANO) | (1L << LACTOSE) | (1L << GLUTEN))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -506,21 +497,21 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(63);
+			setState(59);
 			match(PASSOS);
-			setState(64);
+			setState(60);
 			match(DOIS_PONTOS);
-			setState(66); 
+			setState(62); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(65);
+				setState(61);
 				passo();
 				}
 				}
-				setState(68); 
+				setState(64); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MISTURAR) | (1L << ADICIONAR) | (1L << ASSAR) | (1L << BATER) | (1L << REFRIGERAR) | (1L << COZINHAR))) != 0) );
@@ -573,23 +564,23 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(70);
+			setState(66);
 			acao();
-			setState(71);
+			setState(67);
 			match(ABRE_PAREN);
-			setState(73);
+			setState(69);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==NUMERO || _la==STRING) {
 				{
-				setState(72);
+				setState(68);
 				argumentos();
 				}
 			}
 
-			setState(75);
+			setState(71);
 			match(FECHA_PAREN);
-			setState(76);
+			setState(72);
 			match(PONTO_VIRGULA);
 			}
 		}
@@ -637,7 +628,7 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(78);
+			setState(74);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MISTURAR) | (1L << ADICIONAR) | (1L << ASSAR) | (1L << BATER) | (1L << REFRIGERAR) | (1L << COZINHAR))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -697,21 +688,21 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(80);
+			setState(76);
 			argumento();
-			setState(85);
+			setState(81);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==VIRGULA) {
 				{
 				{
-				setState(81);
+				setState(77);
 				match(VIRGULA);
-				setState(82);
+				setState(78);
 				argumento();
 				}
 				}
-				setState(87);
+				setState(83);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -758,27 +749,27 @@ public class ReceitaParser extends Parser {
 		enterRule(_localctx, 20, RULE_argumento);
 		int _la;
 		try {
-			setState(93);
+			setState(89);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case STRING:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(88);
+				setState(84);
 				match(STRING);
 				}
 				break;
 			case NUMERO:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(89);
+				setState(85);
 				match(NUMERO);
-				setState(91);
+				setState(87);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << G) | (1L << KG) | (1L << ML) | (1L << L) | (1L << UN) | (1L << C) | (1L << MIN))) != 0)) {
 					{
-					setState(90);
+					setState(86);
 					unidade();
 					}
 				}
@@ -834,7 +825,7 @@ public class ReceitaParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(95);
+			setState(91);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << G) | (1L << KG) | (1L << ML) | (1L << L) | (1L << UN) | (1L << C) | (1L << MIN))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -858,29 +849,29 @@ public class ReceitaParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3#d\4\2\t\2\4\3\t\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3%`\4\2\t\2\4\3\t\3"+
 		"\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4\f"+
 		"\t\f\4\r\t\r\3\2\3\2\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3"+
-		"\4\6\4*\n\4\r\4\16\4+\3\5\3\5\3\5\3\5\3\5\7\5\63\n\5\f\5\16\5\66\13\5"+
-		"\3\5\3\5\3\6\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\b\3\b\3\b\6\bE\n\b\r\b\16\b"+
-		"F\3\t\3\t\3\t\5\tL\n\t\3\t\3\t\3\t\3\n\3\n\3\13\3\13\3\13\7\13V\n\13\f"+
-		"\13\16\13Y\13\13\3\f\3\f\3\f\5\f^\n\f\5\f`\n\f\3\r\3\r\3\r\2\2\16\2\4"+
-		"\6\b\n\f\16\20\22\24\26\30\2\5\3\2\13\16\3\2\17\24\3\2\25\33\2^\2\32\3"+
-		"\2\2\2\4 \3\2\2\2\6&\3\2\2\2\b-\3\2\2\2\n9\3\2\2\2\f?\3\2\2\2\16A\3\2"+
-		"\2\2\20H\3\2\2\2\22P\3\2\2\2\24R\3\2\2\2\26_\3\2\2\2\30a\3\2\2\2\32\33"+
-		"\5\4\3\2\33\34\5\6\4\2\34\35\5\16\b\2\35\36\7\7\2\2\36\37\7\2\2\3\37\3"+
-		"\3\2\2\2 !\7\3\2\2!\"\7\35\2\2\"#\7\4\2\2#$\7\36\2\2$%\7\34\2\2%\5\3\2"+
-		"\2\2&\'\7\5\2\2\')\7\36\2\2(*\5\b\5\2)(\3\2\2\2*+\3\2\2\2+)\3\2\2\2+,"+
-		"\3\2\2\2,\7\3\2\2\2-.\7\34\2\2./\5\30\r\2/\60\7\n\2\2\60\64\7\35\2\2\61"+
-		"\63\5\n\6\2\62\61\3\2\2\2\63\66\3\2\2\2\64\62\3\2\2\2\64\65\3\2\2\2\65"+
-		"\67\3\2\2\2\66\64\3\2\2\2\678\7 \2\28\t\3\2\2\29:\7\b\2\2:;\5\f\7\2;<"+
-		"\7\t\2\2<=\7\35\2\2=>\7 \2\2>\13\3\2\2\2?@\t\2\2\2@\r\3\2\2\2AB\7\6\2"+
-		"\2BD\7\36\2\2CE\5\20\t\2DC\3\2\2\2EF\3\2\2\2FD\3\2\2\2FG\3\2\2\2G\17\3"+
-		"\2\2\2HI\5\22\n\2IK\7!\2\2JL\5\24\13\2KJ\3\2\2\2KL\3\2\2\2LM\3\2\2\2M"+
-		"N\7\"\2\2NO\7 \2\2O\21\3\2\2\2PQ\t\3\2\2Q\23\3\2\2\2RW\5\26\f\2ST\7\37"+
-		"\2\2TV\5\26\f\2US\3\2\2\2VY\3\2\2\2WU\3\2\2\2WX\3\2\2\2X\25\3\2\2\2YW"+
-		"\3\2\2\2Z`\7\35\2\2[]\7\34\2\2\\^\5\30\r\2]\\\3\2\2\2]^\3\2\2\2^`\3\2"+
-		"\2\2_Z\3\2\2\2_[\3\2\2\2`\27\3\2\2\2ab\t\4\2\2b\31\3\2\2\2\t+\64FKW]_";
+		"\4\6\4*\n\4\r\4\16\4+\3\5\3\5\3\5\3\5\3\5\5\5\63\n\5\3\5\3\5\3\6\3\6\3"+
+		"\6\3\6\3\6\3\7\3\7\3\b\3\b\3\b\6\bA\n\b\r\b\16\bB\3\t\3\t\3\t\5\tH\n\t"+
+		"\3\t\3\t\3\t\3\n\3\n\3\13\3\13\3\13\7\13R\n\13\f\13\16\13U\13\13\3\f\3"+
+		"\f\3\f\5\fZ\n\f\5\f\\\n\f\3\r\3\r\3\r\2\2\16\2\4\6\b\n\f\16\20\22\24\26"+
+		"\30\2\5\3\2\13\16\3\2\17\24\3\2\25\33\2Z\2\32\3\2\2\2\4 \3\2\2\2\6&\3"+
+		"\2\2\2\b-\3\2\2\2\n\66\3\2\2\2\f;\3\2\2\2\16=\3\2\2\2\20D\3\2\2\2\22L"+
+		"\3\2\2\2\24N\3\2\2\2\26[\3\2\2\2\30]\3\2\2\2\32\33\5\4\3\2\33\34\5\6\4"+
+		"\2\34\35\5\16\b\2\35\36\7\7\2\2\36\37\7\2\2\3\37\3\3\2\2\2 !\7\3\2\2!"+
+		"\"\7\35\2\2\"#\7\4\2\2#$\7\36\2\2$%\7\34\2\2%\5\3\2\2\2&\'\7\5\2\2\')"+
+		"\7\36\2\2(*\5\b\5\2)(\3\2\2\2*+\3\2\2\2+)\3\2\2\2+,\3\2\2\2,\7\3\2\2\2"+
+		"-.\7\34\2\2./\5\30\r\2/\60\7\n\2\2\60\62\7\35\2\2\61\63\5\n\6\2\62\61"+
+		"\3\2\2\2\62\63\3\2\2\2\63\64\3\2\2\2\64\65\7 \2\2\65\t\3\2\2\2\66\67\7"+
+		"\b\2\2\678\5\f\7\289\7\t\2\29:\7\35\2\2:\13\3\2\2\2;<\t\2\2\2<\r\3\2\2"+
+		"\2=>\7\6\2\2>@\7\36\2\2?A\5\20\t\2@?\3\2\2\2AB\3\2\2\2B@\3\2\2\2BC\3\2"+
+		"\2\2C\17\3\2\2\2DE\5\22\n\2EG\7!\2\2FH\5\24\13\2GF\3\2\2\2GH\3\2\2\2H"+
+		"I\3\2\2\2IJ\7\"\2\2JK\7 \2\2K\21\3\2\2\2LM\t\3\2\2M\23\3\2\2\2NS\5\26"+
+		"\f\2OP\7\37\2\2PR\5\26\f\2QO\3\2\2\2RU\3\2\2\2SQ\3\2\2\2ST\3\2\2\2T\25"+
+		"\3\2\2\2US\3\2\2\2V\\\7\35\2\2WY\7\34\2\2XZ\5\30\r\2YX\3\2\2\2YZ\3\2\2"+
+		"\2Z\\\3\2\2\2[V\3\2\2\2[W\3\2\2\2\\\27\3\2\2\2]^\t\4\2\2^\31\3\2\2\2\t"+
+		"+\62BGSY[";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

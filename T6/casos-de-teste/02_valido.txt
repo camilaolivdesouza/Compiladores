@@ -1,0 +1,16 @@
+RECEITA "Bolo"
+
+PORCOES: 8
+
+INGREDIENTES:
+
+300 ml de "leite" SUBSTITUIR lactose POR "leite vegetal";
+
+3 un de "ovo";
+
+PASSOS:
+
+MISTURAR("leite");
+ASSAR(180 C, 40 min);
+
+FIM

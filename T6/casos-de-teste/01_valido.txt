@@ -1,0 +1,13 @@
+RECEITA "Cafe"
+
+PORCOES: 1
+
+INGREDIENTES:
+
+200 ml de "agua";
+
+PASSOS:
+
+COZINHAR();
+
+FIM

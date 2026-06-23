@@ -24,13 +24,19 @@ ingredientes
     ;
 
 ingrediente
-    : NUMERO unidade DE STRING substituicao* PONTO_VIRGULA
+    : NUMERO unidade DE STRING
+      substituicao?
+      PONTO_VIRGULA
     ;
 
 substituicao
-    : SUBSTITUIR restricao POR STRING PONTO_VIRGULA
+    : SUBSTITUIR restricao POR STRING
     ;
 
+/*
+ * Restrições alimentares são palavras reservadas.
+ * Valores não reconhecidos são tratados como erro léxico.
+ */
 restricao
     : VEGANO
     | VEGETARIANO
@@ -130,29 +136,15 @@ STRING
     : '"' (~["\r\n])* '"'
     ;
 
-DOIS_PONTOS
-    : ':'
-    ;
+DOIS_PONTOS : ':';
+VIRGULA : ',';
+PONTO_VIRGULA : ';';
 
-VIRGULA
-    : ','
-    ;
-
-PONTO_VIRGULA
-    : ';'
-    ;
-
-ABRE_PAREN
-    : '('
-    ;
-
-FECHA_PAREN
-    : ')'
-    ;
+ABRE_PAREN : '(';
+FECHA_PAREN : ')';
 
 WS
-    : [ \t\r\n]+
-      -> skip
+    : [ \t\r\n]+ -> skip
     ;
 
 ERRO_CADEIA
@@ -160,5 +152,5 @@ ERRO_CADEIA
     ;
 
 CARACTERE_INVALIDO
-    : .
+    : ~[ \t\r\n:;,()"0-9]+
     ;

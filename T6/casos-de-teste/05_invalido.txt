@@ -1,0 +1,13 @@
+RECEITA "Teste"
+
+PORCOES: 2
+
+INGREDIENTES:
+
+100 g de "agua"
+
+PASSOS:
+
+COZINHAR();
+
+FIM

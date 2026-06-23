@@ -1,0 +1,13 @@
+RECEITA "Bolo de Chocolate"
+
+PORCOES: 12
+
+INGREDIENTES:
+
+200 g de "farinha de trigo";
+
+PASSOS:
+
+MISTURAR("farinha de trigo");
+
+FIM
