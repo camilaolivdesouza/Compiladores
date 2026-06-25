@@ -1,0 +1,8 @@
+RECEITA "Bolo Duplo"
+PORCOES: 4
+INGREDIENTES:
+200 g de "farinha";
+100 g de "farinha";
+PASSOS:
+MISTURAR("farinha");
+FIM

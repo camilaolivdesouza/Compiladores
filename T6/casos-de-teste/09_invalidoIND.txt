@@ -1,0 +1,7 @@
+RECEITA "Bolo Magico"
+PORCOES: 4
+INGREDIENTES:
+200 g de "farinha";
+PASSOS:
+MISTURAR("farinha", "leite");
+FIM

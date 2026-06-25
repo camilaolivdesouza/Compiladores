@@ -1,0 +1,7 @@
+RECEITA "Bolo de Nada"
+PORCOES: 0
+INGREDIENTES:
+200 g de "farinha";
+PASSOS:
+MISTURAR("farinha");
+FIM

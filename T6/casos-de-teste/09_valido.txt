@@ -1,0 +1,9 @@
+RECEITA "Bolo Certo"
+PORCOES: 4
+INGREDIENTES:
+200 g de "farinha";
+200 ml de "leite";
+PASSOS:
+MISTURAR("farinha", "leite");
+ASSAR(180 C, 40 min);
+FIM

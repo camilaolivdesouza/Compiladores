@@ -1,0 +1,10 @@
+RECEITA "Bolo de Cenoura"
+PORCOES: 8
+INGREDIENTES:
+3 un de "cenoura";
+200 ml de "leite"
+    SUBSTITUIR lactose POR "leite de soja";
+PASSOS:
+BATER("cenoura", "leite");
+ASSAR(180 C, 40 min);
+FIM
