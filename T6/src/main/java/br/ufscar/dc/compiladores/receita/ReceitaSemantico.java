@@ -4,6 +4,23 @@ public class ReceitaSemantico extends ReceitaBaseVisitor<Void> {
 
     TabelaDeSimbolos tabela = new TabelaDeSimbolos();
 
+    @Override
+    public Void visitReceita(ReceitaParser.ReceitaContext ctx) {
+        super.visitReceita(ctx);
+
+        // depois que a árvore toda foi lida, varre-se a tabela
+        for (DefinicaoIngrediente simbolo : tabela.obterTodos()) {
+            if (!simbolo.isUtilizado()) {
+                ReceitaSemanticoUtils.adicionarErroSemantico(
+                        simbolo.getTokenDeclaracao(),
+                        "ingrediente " + simbolo.getTokenDeclaracao().getText() + " foi declarado, mas nunca utilizado nos passos"
+                );
+            }
+        }
+
+        return null;
+    }
+
     // Verifica se a quantidade de porções é válida
     @Override
     public Void visitCabecalho(ReceitaParser.CabecalhoContext ctx) {
@@ -28,7 +45,17 @@ public class ReceitaSemantico extends ReceitaBaseVisitor<Void> {
                     "ingrediente " + nomeIngrediente + " ja declarado"
             );
         } else {
-            tabela.adicionar(nomeIngrediente);
+            tabela.adicionar(nomeIngrediente, ctx.STRING().getSymbol());
+
+            // verifica se existe a regra de substituicao
+            if (ctx.substituicao() != null){
+                // recupera a restrição (ex: vegano) e o novo ingrediente (ex: linhaça)
+                String restricao = ctx.substituicao().restricao().getText();
+                String substituto = ctx.substituicao().STRING().getText();
+
+                DefinicaoIngrediente simbolo = tabela.obter(nomeIngrediente);
+                simbolo.adicionarSubstituicao(restricao, substituto);
+            }
         }
 
         return super.visitIngrediente(ctx);
@@ -47,6 +74,10 @@ public class ReceitaSemantico extends ReceitaBaseVisitor<Void> {
                                 argCtx.STRING().getSymbol(),
                                 "ingrediente " + nomeIngrediente + " nao declarado"
                         );
+                    } else {
+                        // marca como utilizado o ingrediente
+                        DefinicaoIngrediente ingrediente = tabela.obter(nomeIngrediente);
+                        ingrediente.marcarComoUtilizado();
                     }
                 }
             }

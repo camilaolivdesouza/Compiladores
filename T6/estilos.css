@@ -1,0 +1,84 @@
+/* Variáveis de cor*/
+:root {
+    --bg-fundo: #2b2b2b;
+    --bg-barra: #1f1f1f;
+    --texto-claro: #fcfcfc;
+    --texto-escuro: #111111;
+    --branco: #ffffff;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-fundo);
+    color: var(--texto-escuro);
+    margin: 0;
+    padding: 0;
+}
+
+/* =====================
+ * Barra Superior (Header)
+ * ===================== */
+.barra-superior {
+    background-color: var(--bg-barra);
+    color: var(--texto-claro);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.barra-superior h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 400;
+}
+
+/* =====================
+ * Container da Receita
+ * ===================== */
+.container {
+    background-color: var(--branco);
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 60px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+}
+
+/* =====================
+ * Tipografia e Títulos
+ * ===================== */
+.titulo-receita {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 500;
+    margin-bottom: 50px;
+    margin-top: 0;
+}
+
+/* sublinhado do título */
+.titulo-receita span {
+    border-bottom: 4px solid var(--texto-escuro);
+    padding-bottom: 10px;
+}
+
+.secao-titulo {
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+/* =====================
+ * Listas (Ingredientes e Passos)
+ * ===================== */
+ul {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+}
+
+li {
+    margin-bottom: 8px;
+}
