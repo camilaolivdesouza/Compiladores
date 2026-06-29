@@ -216,10 +216,8 @@ O diretório `casos-de-teste/` contém 19 arquivos organizados por tipo de erro 
 RECEITA "Bolo de Chocolate"
 PORCOES: 8
 INGREDIENTES:
-200 g de "farinha de trigo"
-    SUBSTITUIR gluten POR "farinha de arroz";
-3 un de "ovo"
-    SUBSTITUIR vegano POR "linhaça";
+200 g de "farinha de trigo" SUBSTITUIR gluten POR "farinha de arroz";
+3 un de "ovo" SUBSTITUIR vegano POR "linhaça";
 100 g de "chocolate";
 PASSOS:
 MISTURAR("farinha de trigo", "ovo");
